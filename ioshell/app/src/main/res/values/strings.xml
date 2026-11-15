@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">XiaomiUITweaker</string>
+    <string name="edge_service_desc">Stažení shora otevře Centrum oznámení (vlevo) nebo Ovládací centrum (vpravo) ve stylu iPhonu. Služba nečte obsah obrazovky.</string>
+</resources>

@@ -1,0 +1,21 @@
+# osobni / generovane – NENAHRAVAT
+napady/
+dist/
+*.mtz
+*.apk
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.heic
+*.mp4
+!ioshell/app/src/main/res/**/*.jpg
+
+# Android / Gradle
+ioshell/.gradle/
+ioshell/build/
+ioshell/app/build/
+ioshell/local.properties
+ioshell/.idea/
+*.iml
+.kotlin/

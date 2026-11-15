@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  "Graphite" – minimalisticky lock screen pro MIUI 14 (MAML)
+  Cil: Redmi Note 10 (mojito), 1080 x 2400.
+  Rozlozeni:
+    - nahore vlevo: den + datum (maly text)
+    - pod tim: velky tenky cas
+    - drobny radek: baterie (+ budik, pokud je nastaveny)
+    - stred obrazovky necham volny -> tam MIUI kresli notifikace
+    - dole: tenka linka = "potahni nahoru"
+  Odemceni: swipe nahoru (> 260 px). Pri PIN/otisku MIUI pak ukaze svuj bezpecny keyguard.
+-->
+<Lockscreen version="2" frameRate="30" screenWidth="1080" displayDesktop="false">
+
+    <!-- ===== Barvy / rozmery (uprav podle chuti) ===== -->
+    <Var name="pad"    expression="96" />
+    <Var name="topY"   expression="300" />
+    <Var name="dy"     expression="0" />
+    <Var name="sy"     expression="0" />
+
+    <!-- Tapeta zamykaci obrazovky (wallpaper/default_lock_wallpaper.jpg nebo co si nastavis) -->
+    <Wallpaper />
+
+    <!-- Jemne ztmaveni, at je text vzdy citelny i na svetle tapete -->
+    <Rectangle x="0" y="0" w="#screen_width" h="#screen_height" fillColor="#000000"
+               alpha="70 + min(120, #dy*0.4)" />
+
+    <!-- ===== Obsah, ktery pri swipu odjede nahoru a zmizi ===== -->
+    <Group x="0" y="0 - #dy*0.35" alpha="max(0, 255 - #dy*0.7)">
+
+        <!-- Den + datum, napr. "čtvrtek 12. listopadu" (lokalizuje se podle jazyka systemu) -->
+        <DateTime x="#pad" y="#topY" size="40" color="#CCF2EFEA"
+                  format="EEEE d. MMMM" fontFamily="mipro-regular" />
+
+        <!-- Velky cas -->
+        <DateTime x="#pad - 10" y="#topY + 50" size="250" color="#F2EFEA"
+                  format="HH:mm" fontFamily="mipro-thin" />
+
+        <!-- Tenka oddelovaci linka -->
+        <Rectangle x="#pad" y="#topY + 360" w="72" h="3" fillColor="#66F2EFEA" />
+
+        <!-- Baterie -->
+        <Text x="#pad" y="#topY + 392" size="34" color="#99F2EFEA"
+              format="%d %%" paras="#battery_level" fontFamily="mipro-regular" />
+        <Text x="#pad + 130" y="#topY + 392" size="34" color="#C9B48A"
+              text="nabíjí se" fontFamily="mipro-regular"
+              visibility="eq(#battery_state, 1)" />
+
+        <!-- Budik (zobrazi se jen kdyz je nastaveny) -->
+        <Text x="#screen_width - #pad" y="#topY + 392" align="right" size="34" color="#99F2EFEA"
+              format="budík %s" paras="@next_alarm_time" fontFamily="mipro-regular"
+              visibility="not(strIsEmpty(@next_alarm_time))" />
+    </Group>
+
+    <!-- Indikator swipu dole -->
+    <Rectangle x="(#screen_width - 120) / 2" y="#screen_height - 90 - #dy*0.2" w="120" h="6"
+               cornerRadius="3,3" fillColor="#88F2EFEA" alpha="max(0, 255 - #dy)" />
+
+    <!-- ===== Gesto: swipe nahoru = odemknout ===== -->
+    <Button x="0" y="0" w="#screen_width" h="#screen_height">
+        <Triggers>
+            <Trigger action="down">
+                <VariableCommand name="sy" expression="#touch_y" />
+                <VariableCommand name="dy" expression="0" />
+            </Trigger>
+            <Trigger action="move">
+                <VariableCommand name="dy" expression="max(0, #sy - #touch_y)" />
+            </Trigger>
+            <Trigger action="up">
+                <ExternCommand command="unlock" condition="gt(#dy, 260)" />
+                <VariableCommand name="dy" expression="0" />
+            </Trigger>
+            <Trigger action="cancel">
+                <VariableCommand name="dy" expression="0" />
+            </Trigger>
+        </Triggers>
+    </Button>
+
+</Lockscreen>
